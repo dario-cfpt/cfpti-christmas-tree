@@ -1,43 +1,62 @@
 const logo = "CFPT-I";
+const FONT_FAMILY  = "Georgia";
 // color constants
-const backgroundColor = "#0000ff";
-const textColor = "#ff0000";
-const snowflakesColor = "#ffffff";
+const BACKGROUND_COLOR = "#000000";
+const TEXT_COLOR = "#00FF00";
+const SNOWFLAKES_COLOR = "#ffffff";
 // coordinates constants
-const canvasX = 500;
-const canvasY = 500;
-const maxTextSize = 128;
-const startXposition = 0;
-const startYposition = canvasY / 2 + maxTextSize / 2; // try to center the text position
+const NB_FLOOR = 10;
+const CANVAS_X = 800;
+const CANVAS_Y = 800;
+const MAX_TEXT_SIZE = 180;
+const TEXT_SPACING_X = MAX_TEXT_SIZE * 4;
+const TEXT_SPACING_Y = MAX_TEXT_SIZE * 2;
+const MIN_SCALING = 0.1;
+const SCALING_SPEED = 0.01;
 
-let actualTextSize = maxTextSize;
-let actualXposition = startXposition;
-let actualYposition = startYposition;
+let scaling = 1.0;
+let actualTextSize = MAX_TEXT_SIZE;
 
 let snowflakes = []; // array to hold snowflake objects
 
 function setup() {
-    createCanvas(canvasX, canvasY);
-    textFont('Georgia');
+    createCanvas(CANVAS_X, CANVAS_Y);
+    textFont(FONT_FAMILY);
 }
 
 function draw() {
     clear();
-    fill(textColor);
-    background(backgroundColor);
+    fill(TEXT_COLOR);
+    background(BACKGROUND_COLOR);
     textSize(actualTextSize);
-    text(logo, actualXposition, actualYposition);
-    if (actualTextSize >= 15) {
-        actualTextSize--;
-    }
 
     push();
-    snowEffect();
+    translate(CANVAS_X / 2 - 50, 0);
+    scale(scaling);
+    if (scaling > MIN_SCALING) {
+        scaling -= SCALING_SPEED;
+    }
+    drawChristmasTree();
     pop();
+
+    snowEffect();
+}
+
+function drawChristmasTree() {
+    let posX = CANVAS_X / 2 - TEXT_SPACING_X / 2;
+    let posY = TEXT_SPACING_Y;
+    for (let x = 1; x <= NB_FLOOR; x++) {
+        for (let y = 0; y < x; y++) {
+            text(logo, posX, posY);
+            posX += TEXT_SPACING_X;
+        }
+        posX -=  TEXT_SPACING_X * x + TEXT_SPACING_X / 2;
+        posY += TEXT_SPACING_Y;
+    }
 }
 
 function snowEffect() {
-    fill(snowflakesColor);
+    fill(SNOWFLAKES_COLOR);
     let t = frameCount / 60; // update time
 
     // create a random number of snowflakes each frame
